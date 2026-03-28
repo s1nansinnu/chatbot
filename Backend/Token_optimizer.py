@@ -2,19 +2,6 @@ from google import genai
 from config import GEMINI_API_KEY, MODEL_NAME, MAX_TOKENS, MAX_HISTORY_MESSAGES
 
 client=genai.Client(api_key=GEMINI_API_KEY)
-
-def count_tokens(messages: list)-> int:
-    total_text=""
-    for msg in messages:
-        total_text+=msg["role"]+":"+msg["content"]+"\n"
-    try:
-        response=client.models.count_tokens(
-            model=MODEL_NAME,
-            contents=total_text
-        )
-        return response.total_tokens
-    except Exception:
-        return len(total_text)//4
     
 def summarize_messages(messages: list)-> str:
     conversation_text=""
@@ -36,13 +23,12 @@ def summarize_messages(messages: list)-> str:
     except Exception:
         return conversation_text[:500]
     
-def optimize_history(messages: list)-> tuple:
+def optimize_history(messages: list)-> list:
     if len(messages)<=4:
-        token_count=count_tokens(messages)
-        return messages, token_count
-    token_count=count_tokens(messages)
-    if token_count<=MAX_TOKENS and len(messages)<=MAX_HISTORY_MESSAGES:
-        return messages, token_count
+        return messages
+    
+    if len(messages)<=MAX_HISTORY_MESSAGES:
+        return messages,
     
     old_messages=messages[:-4]
     recent_messages=messages[-4:]
@@ -55,5 +41,4 @@ def optimize_history(messages: list)-> tuple:
         }
     ]+recent_messages
     
-    new_token_count=count_tokens(optimized)
-    return optimized, new_token_count
+    return optimized

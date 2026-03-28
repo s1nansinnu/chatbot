@@ -31,6 +31,7 @@ SYSTEM_PROMPT = """You are a helpful and knowledgeable AI assistant. Follow thes
 
 ## 5. Response Style
 - Be concise but thorough.
+- keep Responses shorter with 300 words or less, unless the user specifically asks for a detailed explanation.
 - Use bullet points or numbered lists for structured information.
 - Give examples when they help explain a concept.
 - Connect follow-up answers naturally to the previous topic.
@@ -43,7 +44,7 @@ def generate_response( user_message: str, SessionId: str= None,)-> dict:
     history=get_history(SessionId)
     save_message(SessionId, "user", user_message)
     messages_for_llm=history+[{"role": "user", "content": user_message}]
-    optimized_messages, token_count=optimize_history(messages_for_llm)
+    optimized_messages=optimize_history(messages_for_llm)
     chat_history=[]
     for msg in optimized_messages[:-1]:
         chat_history.append(
@@ -62,11 +63,11 @@ def generate_response( user_message: str, SessionId: str= None,)-> dict:
             ))
         response=chat.send_message(optimized_messages[-1]["content"])
         bot_response=response.text
+        token_count = response.usage_metadata.total_token_count
     except Exception as e:
         bot_response= f"I apologize, I encountered an error while generating a response.could you please try again (Error details: {str(e)})"
     save_message(SessionId, "assistant", bot_response)
     return {
         "SessionId": SessionId,
         "Response": bot_response,
-        "TokensUsed": token_count
     }   

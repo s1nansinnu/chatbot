@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 
 class chatRequest(BaseModel):
     SessionId: Optional[str]= None
@@ -8,7 +8,6 @@ class chatRequest(BaseModel):
 class chatResponse(BaseModel):
     SessionId: str
     Response: str
-    TokensUsed: int
 
 class MessageHistory(BaseModel):
     role: str
