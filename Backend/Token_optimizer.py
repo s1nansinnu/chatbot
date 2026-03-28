@@ -2,15 +2,17 @@ from google import genai
 from config import GEMINI_API_KEY, MODEL_NAME, MAX_TOKENS, MAX_HISTORY_MESSAGES
 
 client=genai.Client(api_key=GEMINI_API_KEY)
-model= genai.GenerativeModel(MODEL_NAME)
 
 def count_tokens(messages: list)-> int:
     total_text=""
     for msg in messages:
         total_text+=msg["role"]+":"+msg["content"]+"\n"
     try:
-        token_count=client.models.count_tokens(total_text)
-        return token_count.total_tokens
+        response=client.models.count_tokens(
+            model=MODEL_NAME,
+            contents=total_text
+        )
+        return response.total_tokens
     except Exception:
         return len(total_text)//4
     
@@ -27,7 +29,9 @@ def summarize_messages(messages: list)-> str:
                     {conversation_text}
                     Summary:"""
     try:
-        response=client.models.generate_content(summary_prompt)
+        response=client.models.generate_content(
+            model=MODEL_NAME,
+            contents=summary_prompt)
         return response.text()
     except Exception:
         return conversation_text[:500]
