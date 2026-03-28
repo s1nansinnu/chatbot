@@ -46,10 +46,11 @@ def generate_response( user_message: str, SessionId: str= None,)-> dict:
     optimized_messages, token_count=optimize_history(messages_for_llm)
     chat_history=[]
     for msg in optimized_messages[:-1]:
-        chat_history.append({
-            "role":"user" if msg["role"] == "user" else "model",
-            "parts": [msg["content"]]
-        })
+        chat_history.append(
+            types.Content(
+            role="user" if msg["role"] == "user" else "model",
+            parts= [types.Part.from_text(text=msg["content"])]
+         ))
     
     try:
         chat=client.chats.create(
@@ -60,9 +61,9 @@ def generate_response( user_message: str, SessionId: str= None,)-> dict:
                 temperature=0.7
             ))
         response=chat.send_message(optimized_messages[-1]["content"])
-        bot_response=response.text()
+        bot_response=response.text
     except Exception as e:
-        bot_response: f"I apologize, I encountered an error while generating a response.could you please try again (Error details: {str(e)})"
+        bot_response= f"I apologize, I encountered an error while generating a response.could you please try again (Error details: {str(e)})"
     save_message(SessionId, "assistant", bot_response)
     return {
         "SessionId": SessionId,

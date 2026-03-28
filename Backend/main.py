@@ -17,11 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
-app.get("/")
+@app.get("/")
 def root():
     return {"message": "Chatbot is Running"}
 
-app.post("/chat", response_model=chatResponse)
+@app.post("/chat", response_model=chatResponse)
 def chat(request: chatRequest):
     try:
         result = generate_response(
@@ -32,7 +32,7 @@ def chat(request: chatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-app.post("/new session", response_model=sessionresponse)
+@app.post("/new-session", response_model=sessionresponse)
 def new_session():
     try:
         SessionId=create_session()
@@ -40,7 +40,7 @@ def new_session():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-app.get("/history/{SessionId}")
+@app.get("/history/{SessionId}")
 def get_chat_history(SessionId: str):
     try:
         history=get_history(SessionId)
@@ -52,7 +52,7 @@ def get_chat_history(SessionId: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-app.delete("/history/{SessionId}")
+@app.delete("/history/{SessionId}")
 def delete_chat_history(SessionId: str):
     try:
         clear_history(SessionId)

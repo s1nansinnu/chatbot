@@ -7,7 +7,7 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCRENEMENT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             SessionId TEXT NOT NULL,
             role TEXT NOT NULL,
             content TEXT NOT NULL,
