@@ -1,9 +1,9 @@
-import google.generativeai as genai
+from google import genai
 from config import GEMINI_API_KEY, MODEL_NAME
 from History_manager import get_history, save_message, create_session
 from Token_optimizer import optimize_history
 
-genai.configure(api_key=GEMINI_API_KEY)
+client=genai.Client(api_key=GEMINI_API_KEY)
 model= genai.GenerativeModel(MODEL_NAME)
 
 SYSTEM_PROMPT = """You are a helpful and knowledgeable AI assistant. Follow these rules strictly in every response:
@@ -52,7 +52,7 @@ def generate_response( user_message: str, SessionId: str= None,)-> dict:
         })
     
     try:
-        chat=model.start_chat(history=chat_history)
+        chat=client.models.start_chat(history=chat_history)
         response=chat.send_message(
             f"{SYSTEM_PROMPT}\n\nUser's message: {optimized_messages[-1]['content']}")
         bot_response=response.text()
