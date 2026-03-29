@@ -28,7 +28,7 @@ def optimize_history(messages: list)-> list:
         return messages
     
     if len(messages)<=MAX_HISTORY_MESSAGES:
-        return messages,
+        return messages
     
     old_messages=messages[:-4]
     recent_messages=messages[-4:]
